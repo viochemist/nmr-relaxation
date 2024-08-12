@@ -1,0 +1,314 @@
+; 15N1H HetNoe relaxation experiment with sensitivity enhanced (Rance-Kay) HSQC read-out
+; for 15N, 2H15N, 15N13C and 2H15N13C labelled proteins
+; originally written by NL 10/27/11 (N15HetNoe_rk.nl)
+; see footnotes
+ ;
+; References:
+;   N-A Lakomek, J Ying, A Bax.
+;   J Biomol NMR (2012) 53:209-221
+;   doi: 10.1007/s10858-012-9626-5
+;
+;   M Gairi, A Dyachenko, MT Gonzalez, M Feliz, M Pons, E Giralt.
+;   J Biomol NMR (2015) 62:209220
+;   doi: 10.1007/s10858-015-9937-4
+;
+;$CLASS=HighRes
+;$DIM=pseudo3D
+;$TYPE=Relaxation
+;$SUBTYPE=hetNOE
+;$COMMENT=Amide 15N heteronuclear NOE via HSQCsi correlation
+
+#include <Avance.incl>
+#include <Grad.incl>
+#include <Delay.incl>
+
+; ###################################
+; SETUP NOTES
+;
+; O1 ~ 4.7 ppm (H2O)
+; O2 = 53.5 ppm (Calpha)
+; O3 ~ 118 ppm (Amide N)
+;
+; Adjust p0/phcor0 to improve water suppression (supposedly)
+; 
+; ZGOPTNS
+;   -DLABEL_CN : For double/triple-labeled samples. Set sp38 to a square shape
+;   with 50-500 pts. NOT Rect.1 or Squa100.1000!!
+;
+; ####################################
+
+; Modified by ALH (hansen.434@osu.edu)
+; - Added setup notes section
+; - Make prosol compliant with <triple> 
+; ... p0->p0
+; ... p32->p32 (fixed 200us)
+; ... p36->p36 (fixed 1ms)
+; ... pl4->pl8 (calculated)
+; ... sp4->sp38
+; - Frequency switch 13C to cnst21 to ensure correct pulses
+; - NOE ref vs. sat based on modulus 2 now (for running >2 planes)
+; - Fix gradients at beginning
+; ... needed gradient recovery delay after gradient before 180o pulses
+; ... moved DELTA5 after & before 180o pulse instead of after 90/before t1
+; - General tidyness
+; ... removed excess "goto" labels
+; ... uniform indentation/spacing
+; ... accurate pulse/delay labels
+; ... simplify comments
+; - renamed hsqcetf3gpsi_noe_ps3d.alh / 12 Aug 2024
+; ... final clean up code for publication
+
+; TODO LIST
+; - Check if improved sensitivity with same length encoding/decoding gradients
+
+prosol relations=<triple>
+
+; ###################
+; XYZ  CONSTANTS  XYZ
+; ###################
+
+"cnst23=8.5"    ; center of amide 1H spectrum.
+"cnst22=173.5"  ; For carbonyl decoupling
+"cnst21=53.5"   ; For c-alpha decoupling
+
+; ################
+; _|_  PULSES  _|_
+; ################
+
+"p2=p1*2"
+"p22=p21*2"
+
+"p32=200u"
+"p36=1m"
+
+; ################
+; ___  DELAYS  ___
+; ################
+
+"in0=inf2*0.5"
+"d0=4u"
+"d8=p1"
+"d11=30m"
+"d16=200u"
+"d26=p21-p1"
+
+"DELTA2=2.65m-d16-4u"
+"DELTA3=2.65m-d16-4u"
+"DELTA4=p32-p0*0.63"
+"DELTA5=2.65m-p36-d16-10u"
+"DELTA7=2.65m"
+
+; ##################
+; 123  COUNTERS  123
+; ##################
+
+"l1=0"
+"l2=1"
+"l8=d1/(11m+11m+p2)"
+
+; #####################
+; ???  CONDITIONAL  ???
+; #####################
+
+#ifdef LABEL_CN
+  "p4=.5s*sqrt(3)/(bf2*(cnst22-cnst21)*1e-6)"   ; 13C 180 (root3)
+  "plw8=plw2*pow(2*p3/p4,2)"    ;  -- root3 power
+  "spw38=plw8"
+  "spoal38=0.5"
+  "spoff38=bf2*((cnst22-cnst21)/1000000)"
+  "DELTA6=d0*2+14u+p4*2"
+#else
+  "p4=0"
+  "DELTA6=d0*2+10u"
+#endif
+
+
+; ##############
+; @$%  MISC  @$%
+; ##############
+
+"acqt0=0"
+
+
+aqseq 312
+
+1  ze
+   1m 
+2  3m do:f3
+   d11
+   1m LOCKH_OFF 
+3  3m 
+4  d11 
+5  1m do:f3
+   1m BLKGRAD
+#ifdef LABEL_CN
+   5u pl1:f1 pl8:f2 pl3:f3
+   5u fq=cnst21(bf ppm):f2
+#else
+   10u pl1:f1 pl3:f3
+#endif   
+
+   (p21 ph0):f3  ; 90N pulse before d1
+   1s
+;--------------- 1H saturation period-----------------------
+
+   10u fq=cnst23(bf ppm):f1  
+   
+   if "l2 % 2 == 1" goto 9
+8  11m
+   (p2 ph0):f1
+   11m
+   lo to 8 times l8
+
+goto 10
+ 
+9  11m
+   d8*2
+   11m
+   lo to 9 times l8
+
+10 10u fq=0:f1
+   10u UNBLKGRAD
+;---------- Echo- Antiecho encoding------------------------
+
+   (p21 ph7):f3
+   DELTA6  ;compensation for d0 15N evolution
+
+   5u
+   p36:gp5*EA
+   5u
+   DELTA5 gron0
+   d16 groff
+
+   (center (p2 ph0):f1 (p22 ph0):f3)
+   
+   5u  
+   p36:gp5*EA*-1
+   5u
+   DELTA5 gron0
+   d16 groff
+
+;---------- t1 evolution ----------------------------------
+   d0*0.5 gron1
+   5u groff
+   d0*0.5 gron1*-1
+   5u groff  
+#  ifdef LABEL_CN
+   (center (p2 ph0):f1 (p4 ph0 4u p4:sp38 ph0):f2 )
+#  else
+   (p2 ph0):f1 
+#  endif
+   d0
+;-------- Rance-Kay transfer back -------------------------
+   
+   (center (p1 ph0):f1 (p21 ph8):f3)  
+   4u
+   DELTA2 gron2
+   d16 groff
+   (center(p2 ph0):f1 (p22 ph0):f3)
+   4u
+   DELTA2 gron2
+   d16 groff
+
+; ------ second INEPT -------------------------------------
+   (center (p1 ph1):f1 (p21 ph1):f3)    ;DOUBLE 90
+   4u
+   DELTA3 gron3
+   d16 groff
+   (center(p2 ph0):f1 (p22 ph0):f3)
+   4u
+   DELTA3 gron3
+   d16 groff
+
+   d26*0.5         ; Difference between 1H and 15N 90 pulse. For 1H CS refocusing.
+   (p0 ph0:r):f1   ; last water flip back pulse
+   245u
+   DELTA4
+   (p2 ph0):f1
+   5u
+   p32:gp4
+   200u
+   5u
+   10u pl16:f3
+   20u BLKGRAMP
+
+   go=2 ph31 cpd3:f3
+   1m do:f3  
+   1m LOCKH_OFF
+
+   d11 mc #0 to 4
+     F1QF(calclc(l2,1))
+     F2EA(calgrad(EA) & calph(ph8, +180), caldel(d0, +in0) & calph(ph7, +180) & calph(ph31, +180))
+
+HaltAcqu, 1m
+1m do:f3
+1m BLKGRAD
+
+exit    
+   
+ph0=0
+ph1=1  ;check right phase for Boltzmann !!!!!
+ph2=2
+ph7= 1 3 3 1
+ph8= 0
+ph31=1 3 3 1
+
+;-------------NOTES----------------------
+
+;sfo1: ~4.7 ppm
+;nuc1: 1HN
+
+;sfo2: CA = 53.5 ppm
+;nuc2: 13Ca/CO
+
+;sfo3: ~119 ppm
+;nuc3: 15N
+ 
+;NS=4*n
+;in0=inf/2
+;SW=1/(2*in0)
+;echo-antiecho in N15 (process as Complex in NmrDraw before splitting the spectra)
+
+; 1H pulses
+
+;p1:  90 deg hard 1H pulse @PL1
+;p0 last 90 deg hard 1H pulse @PL1, can be adjusted for improving water-supression
+;pl1: 1H 90 deg 
+;pl0: 120 dB
+
+; 13C pulses
+
+;p4: 13CO selective 180 deg (47.8 us @ 600 MHz) @PL8
+;pl8: 13C 90 deg 
+;sp38: 13CA selective 180 deg (47.8 us @ 600 MHz)
+;spnam38: Square ~ 50-500 pts
+
+
+;15N pulses
+;p21 : 90 deg hard 15N pulse @PL3
+;pl3 :15N 90 deg
+;CPDPRG3: garp (aq 15N decoupling)
+;pcpd3: 15N decoupling (200u @PL16)
+;pl16: 15N decoupling power
+
+
+
+; gradients
+;p20: 1000u
+;p21: 200u
+;p32: 200u Echo/Anti-echo decoding gradient
+;p36: 1000u Echo/Anti-echo half-encoding gradient
+
+;for z-only gradients
+;gpz0: 7.0
+;gpz1: 1.5%
+;gpz2: 5%
+;gpz3: -2%
+;gpz4: 81.07%
+;gpz5: 80%
+
+;gpnam4 SINE.100
+;gpnam5 SINE.100
+
+
+

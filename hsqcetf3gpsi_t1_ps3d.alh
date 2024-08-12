@@ -1,0 +1,453 @@
+;hsqcttf3gpsi_t1_ps3d.alh
+;avance-version (13/11/08)
+;3D H-1/X correlation via double inept transfer
+;   using sensitivity improvement
+;for measuring N-15 T1 relaxation times
+;phase sensitive using Echo/Antiecho-TPPI gradient selection
+;with decoupling during acquisition
+;using f3 - channel
+;using flip-back pulse
+;using H-1 180o pulses rather than cpd decoupling
+;as pseudo3D
+;
+;$CLASS=HighRes
+;$DIM=pseudo3D
+;$TYPE=Relaxation
+;$SUBTYPE=R1
+;$COMMENT=Amide 15N R1 via HSQCsi correlation
+
+; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+; NOTE: Set first delay in vdlist
+; to the average T1 delay for an
+; accurate time estimate (some topspin versions)
+; !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+; Modified by Alex Hansen (hansen.434@osu.edu)
+; - 28 June 2021
+; ... Made NO_INTERLEAVE flag. Turn off to run NUS
+; ... Swapped ph6 and ph7 for minimum phase cycle of 2
+; - renamed hsqcetf3gpsi_t1_ps3d.alh / 12 Aug 2024
+; ... clean up code for publication
+
+; ########### SETUP NOTES #############
+; - Carriers:
+;     1H ~ 4.79 ppm (H2O)
+;    15N ~ 118 ppm (amide)
+;    13C ~ 173.5 ppm (C')
+;
+; - Works with prosol tables
+; - Water suppression pulses:
+;    Optimize p11/sp1/phcor2 and phcor3
+;    Optimize p0/phcor10 
+; - Delays is VDLIST must be a multiple of 40ms
+; - ZGOPTNS:
+;    LABEL_CN - for 13C/15N labeled samples
+;    NO_INTERLEAVE - to record without interleaving scans.
+;                    necessary to record with NUS
+;    TEMP_COMP - use temperature compensation during d1. Set p35 to 
+;                 the longest relaxation delay used in T1rho
+;       
+; #####################################
+
+prosol relations=<triple>
+
+
+#include <Avance.incl>
+#include <Grad.incl>
+#include <Delay.incl>
+
+
+define list<delay> vd_list=<$VDLIST>
+
+; ---- Constants ----
+;cnst0: = 0
+;cnst4: J(NH) = 92 Hz
+;cnst5: >J(NH) ~ 110 Hz
+;cnst6 : Amide region (~8.5 ppm)
+;cnst18: Heat Compensation offset [-50 kHz]
+;cnst21: CO chemical shift (ppm) [173.5 on Bruker]
+;cnst22: Calpha chemical shift (ppm) [53.5 on Bruker]
+
+"cnst0=0"                                     ; = 0
+"cnst4=92"                                    ; J(NH)
+"cnst18=-50000"                               ; heating offset
+"cnst21=173.5"                                ; CO = 176 ppm / 173.5 on Bruker
+"cnst22=53.5"                                 ; Ca = 56 ppm / 53.5 on Bruker
+
+; ---- Pulses ----
+
+;p0 : 1H Final 90 deg @ PL1 (adjustable)
+;p1 : 1H 90 deg @ PL1 (default)
+;p2 : 1H 180 deg @ PL1 (default)
+;p3 : 13C 90 deg @ PL2 (default)
+;p4 : 13C 180 deg @ PL8 ( 120ppm/sqrt(3) )
+;p11: 1H 90 deg H2O flipback pulse
+;p16: Gradient pulse (1 ms)
+;p21: 15N 90 deg @ PL3 (default)
+;p22: 15N 180 deg @ PL3 (default)
+;p35: 15N Max spinlock duration for heat compensation
+;p36: Decoding gradient (1000 us)
+;p37: Short gradient (300 us)
+
+;pcpd3: 15N 90 deg @ PL16 (decoupling)
+;cpdprg3: 15N decoupling (waltz16/64, garp4)
+
+"p2=p1*2"                                     ; 1H 180 (hard)
+"p22=p21*2"                                   ; 15N 180 (hard)
+"p36=p16"                                     ; short gradient
+
+#ifdef LABEL_CN
+"p4=.5s*sqrt(3)/(bf2*(cnst21-cnst22)*1e-6)"   ; 13C 180 (root3)
+"plw8=plw2*pow(2*p3/p4,2)"                    ;  -- root3 power
+"spw38=plw8"
+#else
+"p4=0"
+#endif
+"plw0=0"
+"plw10=0"
+
+; ---- Shapes ----
+;spnam1 : H2O flipback (Sinc, Square, Gauss)
+;spnam26: 1H selective 180 (Reburp)
+;spnam38: 13Ca root3 180 - Square (50-500 pts)
+
+"spoff26=bf1*cnst6*1e-6-o1"                   ; Sel Amide 1H 180
+"spoff38=bf2*cnst22*1e-6-o2"
+"p42=3.525/spoff26"                           ; MUST BE REBURP!
+"spw26=plw1*pow(25.06*p1/p42,2)"
+
+; ---- Delays ----
+"d11=30m"                                     ; I/O delay
+"d12=5u"                                      ; power switching delay
+"d17=d1-p35-d12*4"
+
+"d24=1s/(cnst4*4)"                            ; = 1/4J
+"d25=p21-p1"
+"d26=1s/(cnst5*4)"                            ; < 1/4J
+
+"in10=inf2/4"
+"l0=td2"
+if (l0>2)
+ {
+ "d10=in10/2"
+ }
+ else
+ {
+ "d10=0.0u"
+ }
+
+"DELTA1=d26"                                  ; FIRST INEPT
+"DELTA2=d24"                                  ; SECOND INEPT
+"DELTA5=d24-(4u+p16+d16)+p1*4.667+10u"        ; EA TRANSFER STEP
+
+"DELTA6=d24-4u-d16"                           ; FIRST REV INEPT
+"DELTA7=d24-4u-d16"                           ; SECOND REV INEPT
+"DELTA8=de+p36+d16+8u-p0*2/PI"                ; DECODE STEP
+
+
+#ifdef LABEL_CN
+"DELTA3=20m-p42*.5-p4*2-12u"                  ; T1 DELAY
+"DELTA4=d24-(4u+p16+d16)-p4*2-10u"            ; N15 CS COMPENSATION
+#else
+"DELTA3=20m-p42*.5"
+"DELTA4=d24-(4u+p16+d16)-10u"
+#endif /*LABEL_CN*/
+
+
+; ---- Acquisition ----
+
+#ifdef NO_INTERLEAVE
+"nbl=1"
+#else
+"nbl=td1"
+#endif
+
+"acqt0=0"
+baseopt_echo
+
+
+aqseq 312
+
+
+; ---------------------------------------------------
+;               START OF EXPERIMENT
+; ---------------------------------------------------
+
+1 ze
+#ifdef NO_INTERLEAVE
+  d11 pl16:f3
+#else
+  d11 pl16:f3 st0
+#endif
+2 6m do:f3
+3 6m
+4 d11 do:f3
+  10u pl3:f3
+  (p21 ph0):f3
+  10u
+
+  d12 pl0:f1 UNBLKGRAD 
+
+  (p11:sp1 ph3:r):f1
+  2u
+  2u pl1:f1
+  (p1 ph1):f1
+  4u pl0:f1 
+  p16:gp9*.7 d16 
+
+  (p11:sp1 ph2:r):f1
+  2u
+  2u pl1:f1
+  (p1 ph0):f1
+  4u p16:gp9*.3 d16
+
+  d12 pl0:f1 BLKGRAD 
+
+  "COUNTER=( vd_list / 40m )"
+
+; ---------- BEG : TEMPERATURE COMPENSATION ---------- 
+#ifdef TEMP_COMP
+  "d17=d1-p35-d12*4"
+  d12 fq=cnst18:f3
+  d12 pl25:f3
+  (p35 ph0):f3				; 15N SL far off-resonance
+  d12
+  d12 fq=cnst0:f3
+  d17 pl10:f3
+#else
+  d1
+#endif
+; ---------- END : TEMPERATURE COMPENSATION ---------- 
+
+  d12 UNBLKGRAD
+  d12 pl1:f1 pl3:f3
+
+; ---------- KILL N15 EQUILIBRIUM ----------
+
+  (p21 ph0):f3
+  4u
+  p16:gp0
+  d16
+
+; ---------- FIRST INEPT ----------
+
+  (p1 ph0):f1
+  4u 
+  DELTA1 gron1					; soft gradient suppress rad damp
+  4u groff
+  (center (p2 ph0):f1 (p22 ph0):f3 )
+  4u 
+  DELTA1 gron1					; soft gradient suppress rad damp
+  4u groff
+
+; ---------- SECOND INEPT ----------
+  
+  (center (p1 ph5):f1 (p21 ph0):f3 )		; PHI5 = Y Y Y Y
+  4u 
+  DELTA2 gron2					; soft gradient suppress rad damp
+  4u groff
+  (center (p2 ph0):f1 (p22 ph0):f3 )
+  4u 
+  DELTA2 gron2					; soft gradient suppress rad damp
+  4u groff
+  (center (p1 ph2):f1	(p21 ph6):f3 )	; PHI6 = Y Y -Y -Y
+              				            		; Kill residual HzNz
+
+; ---------- PURGE ----------
+  
+  4u
+  p36:gp3
+
+  d16*.5
+#ifdef LABEL_CN  
+  d16*.5 pl0:f1 pl8:f2
+#else
+  d16*.5 pl0:f1
+#endif
+; ---------- 15N R1 PERIOD ----------
+
+if "COUNTER==0" goto 7
+
+6 DELTA3*0.5
+#ifdef LABEL_CN
+  4u
+  (p4 ph0 4u p4:sp38 ph0):f2
+  4u
+#endif
+
+  DELTA3*0.5
+  (p42:sp26 ph0):f1
+  DELTA3*0.5
+
+#ifdef LABEL_CN
+  4u
+  (p4 ph0 4u p4:sp38 ph0):f2
+  4u
+#endif
+  DELTA3*0.5
+  lo to 6 times COUNTER
+
+; ---------- EA ENCODING ----------
+
+7 d12*0.5 pl1:f1 pl3:f3
+#ifdef LABEL_CN
+  d12*0.5 pl8:f2
+#else
+  d12*0.5
+#endif
+
+  (p21 ph7):f3
+
+  4u p16:gp4*EA d16
+
+  "DELTA5=d24-(4u+p16+d16)+p1*4.667+10u"
+  DELTA5
+
+  (p22 ph9):f3
+
+  5u
+  d10 gron5
+  d10 gron5*-1
+  5u groff
+
+  (p1 ph1 p1*2.667 ph0 p1 ph1):f1
+
+  4u p16:gp4*EA*-1 d16
+
+#ifdef LABEL_CN
+  "DELTA4=d24-(4u+p16+d16)-p4*2-4u-10u"
+  DELTA4
+  (p4 ph0 4u p4:sp38 ph0):f2
+#else
+  "DELTA4=d24-(4u+p16+d16)-10u"
+  DELTA4
+#endif
+  
+  5u
+  d10 gron5
+  d10 gron5*-1
+  5u groff
+
+; ---------- FIRST REV INEPT ----------
+
+  (center (p1 ph0) (p21 ph8):f3 )
+  4u 
+  DELTA6 gron6                 ; gradient suppress rad damp
+  d16 groff
+  (center (p2 ph0):f1 (p22 ph0):f3 )
+  4u 
+  DELTA6 gron6                 ; gradient suppress rad damp
+  d16 groff
+
+; ---------- SECOND REV INEPT ----------
+
+  (center (p1 ph1) (p21 ph3):f3 )
+  4u 
+  DELTA7 gron7                 ; gradient suppress rad damp
+  d16 groff
+  (center (p2 ph0):f1 (p22 ph0):f3 )
+  4u 
+  DELTA7 gron7                 ; gradient suppress rad damp
+  d16 groff
+  (d25*0.5 p0 ph10:r):f1        ; adjustable last 1H 90
+; ---------- EA DECODE ----------
+
+  DELTA8
+  (p2 ph0)
+  4u
+  p36:gp8
+  d16 pl16:f3
+  4u  BLKGRAD
+
+; ---------- DETECT ----------
+
+#ifdef NO_INTERLEAVE
+  go=4 ph31 cpd3:f3 ph4
+  d11 do:f3 mc #0 to 4
+     F1QF(calclist(vd_list, 1) )
+     F2EA(calgrad(EA) & calph(ph8, +180), caldel(d10, +in10) )
+
+#else
+  goscnp ph31 cpd3:f3 ph4
+  10u do:f3
+
+  3m 
+  3m st vd_list.inc
+  lo to 3 times nbl
+
+  3m vd_list.res
+  3m ipp4 ipp5 ipp6 ipp7 ipp9 ipp31
+  lo to 4 times ns
+
+  d11 mc #0 to 4
+     F1QF()
+     F2EA(calgrad(EA) & calph(ph8, +180) & exec(rppall), caldel(d10, +in10) & calph(ph7, +180) & calph(ph31, +180) )
+#endif
+
+
+exit
+   
+
+ph0=0
+ph1=1
+ph2=2
+ph3=3
+ph4=0 2
+ph5=1
+ph6=1 3
+ph7=1
+ph8=0
+ph9=0 0 1 1 2 2 3 3
+ph10=2
+ph31=1 3 3 1 
+
+
+;sfo1: H2O ~ 4.79 ppm
+;sfo2: 13C' = 173.5 ppm
+;sfo3: 15N ~ 118 ppm
+;nuc1: 1H
+;nuc2: 13C
+;nuc3: 15N
+
+;ns: 4 * n
+;ds: >= 16
+;td1: number of delays in vd list
+;td2: number of experiments in F2
+;FnMODE: QF in F1
+;FnMODE: echo-antiecho in F2
+;zgoptns: 'LABEL_CN, TEMP_COMP, NO_INTERLEAVE'
+
+
+;for z-only gradients:
+;gpz0: Kill N15 = 30%
+;gpz1: 1st INEPT = 3%
+;gpz2: 2nd INEPT = 2%
+;gpz3: Cleanup = -50%
+;gpz4: EA Encode = 40% (2 x 1 ms)
+;gpz5: N15 CS bipolar = 2%
+;gpz6: 1st Rev INEPT = -5%
+;gpz7: 2nd Rev INEPT = -0.5%
+;gpz8: Decoding Gradient = 16.21% (1000 us)
+
+
+;use gradient files:   
+;gpnam1: SMSQ10.100
+;gpnam2: SMSQ10.100
+;gpnam3: SMSQ10.100
+;gpnam4: SMSQ10.100
+;gpnam5: SMSQ10.100
+;gpnam6: SMSQ10.100
+
+
+                                          ;preprocessor-flags-start
+;LABEL_CN: for C-13 and N-15 labeled samples start experiment with 
+;             option -DLABEL_CN (eda: ZGOPTNS)
+;NO_INTERLEAVE: to record without interleaving scans start experiment with 
+;             option -DNO_INTERLEAVE (eda: ZGOPTNS)
+;TEMP_COMP: for spinlock heat compensation during recovery delay start experiment with 
+;             option -DTEMP_COMP (eda: ZGOPTNS)
+                                          ;preprocessor-flags-end
+
+
+
+;$Id: hsqct1etf3gpsi3d.2,v 1.14.6.3 2014/01/17 15:19:37 ber Exp $
