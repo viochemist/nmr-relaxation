@@ -426,17 +426,19 @@ ph31=1 3 3 1
 ;gpz4: EA Encode = 40% (2 x 1 ms)
 ;gpz5: N15 CS bipolar = 2%
 ;gpz6: 1st Rev INEPT = -5%
-;gpz7: 2nd Rev INEPT = -0.5%
+;gpz7: 2nd Rev INEPT = -2%
 ;gpz8: Decoding Gradient = 16.21% (1000 us)
+;gpz9: Purge Gradient = 70%
 
 
 ;use gradient files:   
+;gpnam0: SMSQ10.100
 ;gpnam1: SMSQ10.100
 ;gpnam2: SMSQ10.100
 ;gpnam3: SMSQ10.100
 ;gpnam4: SMSQ10.100
-;gpnam5: SMSQ10.100
-;gpnam6: SMSQ10.100
+;gpnam8: SMSQ10.100
+;gpnam9: SMSQ10.100
 
 
                                           ;preprocessor-flags-start

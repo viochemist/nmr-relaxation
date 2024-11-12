@@ -5,11 +5,11 @@
  ;
 ; References:
 ;   N-A Lakomek, J Ying, A Bax.
-;   J Biomol NMR (2012) 53:209-221
+;   J Biomol NMR (2012) 53, 209-221
 ;   doi: 10.1007/s10858-012-9626-5
 ;
 ;   M Gairi, A Dyachenko, MT Gonzalez, M Feliz, M Pons, E Giralt.
-;   J Biomol NMR (2015) 62:209220
+;   J Biomol NMR (2015) 62, 209-220
 ;   doi: 10.1007/s10858-015-9937-4
 ;
 ;$CLASS=HighRes
@@ -300,15 +300,18 @@ ph31=1 3 3 1
 ;p36: 1000u Echo/Anti-echo half-encoding gradient
 
 ;for z-only gradients
-;gpz0: 7.0
+;gpz0: 7.0%
 ;gpz1: 1.5%
 ;gpz2: 5%
 ;gpz3: -2%
 ;gpz4: 81.07%
 ;gpz5: 80%
 
-;gpnam4 SINE.100
-;gpnam5 SINE.100
+;use gradient files:   
+;gpnam4: SMSQ10.100
+;gpnam5: SMSQ10.100
 
 
+
+;$Id:$
 

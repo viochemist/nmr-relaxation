@@ -95,6 +95,8 @@ prosol relations=<triple>
 #include <Grad.incl>
 #include <Delay.incl>
 
+define list<pulse> vp_list=<$VPLIST>
+
 ; =================
 ; === Constants ===
 ; =================
@@ -415,7 +417,7 @@ aqseq 312
 
 #else
 
-"SPINLOCK=vp + TAU*2 + 24u"       ; vp = 0 is OK!
+"SPINLOCK=vp_list + TAU*2 + 24u"       ; vp = 0 is OK!
                                   ; 2*TAU = length of 1H (or 13C) 180s
                                   ; 24 us ensures min grad length of 2us
 "TAU1=SPINLOCK*.25-p1*2.15-4u"
@@ -448,7 +450,7 @@ aqseq 312
   (p33:sp36(currentpower) ph0):f3
 #endif
 
-  "p34=p35-vp"
+  "p34=p35-vp_list"
 
 #endif /*CAL_B1*/
 
@@ -531,14 +533,13 @@ aqseq 312
 #ifdef NO_INTERLEAVE
   go=4 ph31 cpd3:f3 ph4
   d11 do:f3 mc #0 to 4
-;    F1QF()
-    F1QF( calclist(vp, 1) )
+    F1QF( calclist(vp_list, 1) )
     F2EA(calgrad(EA) & calph(ph8, +180) & exec(rppall), caldel(d10, +in0) & calph(ph7, +180) & calph(ph31, +180)  )    
 
 #else
   goscnp ph31 cpd3:f3 ph4
-
   10u do:f3
+
   10u pl3:f3
   (p21 ph0):f3
   10u
@@ -547,10 +548,11 @@ aqseq 312
 #ifdef CAL_B1
   3m st iu0
 #else
-  3m st ivp
+  3m st vp_list.inc
 #endif
   lo to 3 times nbl
- 
+  
+  3m vp_list.res
   3m ipp4 ipp5 ipp6 ipp7 ipp9 ipp31
   lo to 4 times ns
 
