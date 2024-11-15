@@ -1,5 +1,5 @@
 # Amide <sup>15</sup>N relaxation experiments
-NMR pulse sequences of amide pseudo-3D <sup>15</sup>N *R*<sub>1</sub>**, ***R*<sub>1ρ</sub>**, and **{<sup>1</sup>H}-<sup>15</sup>N steady-state heteronuclear NOE relaxation experiments, shapes, and parameter sets for Bruker spectrometers.
+NMR pulse sequences of amide pseudo-3D <sup>15</sup>N *R*<sub>1</sub>, *R*<sub>1ρ</sub>, and {<sup>1</sup>H}-<sup>15</sup>N steady-state heteronuclear NOE relaxation experiments, shapes, and parameter sets for Bruker spectrometers.
 
 ### Requirements
 - Topspin 3.6 or above
