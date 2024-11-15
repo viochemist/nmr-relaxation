@@ -1,0 +1,9 @@
+15N R1rho
+Setup:
+- update o1
+- getprosol, update p1
+- update p35 = longest R1rho spinlock time (~50-100ms)
+- (opt) ZGOPTNS -DLABEL_CN
+- (if LABEL_CN) Set O2P = 173.5, SPNAM38 = Squa100.250 (or similar)
+- RGA
+- update SW, TD, NS, etc as needed

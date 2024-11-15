@@ -1,0 +1,24 @@
+##TITLE= Parameter file, TopSpin 3.7.0
+##JCAMPDX= 5.0
+##DATATYPE= Parameter Values
+##NPOINTS= 1	$$ modification sequence number
+##ORIGIN= Bruker BioSpin GmbH
+##OWNER= bruschweiler
+$$ 2024-11-13 22:46:05.487 -0500  bruschweiler@cbec850rb
+$$ /home/nmr/CCIC_experiments/development/par/Amide_15N_R1rho_relax/acqu2
+$$ process /opt/topspin3.7.0/prog/mod/edparproc
+##$ACQT0= 0
+##$BF1= 86.145965
+##$FnILOOP= 0
+##$FnMODE= 6
+##$NUC1= <15N>
+##$NusJSP= 0
+##$NusT2= 1
+##$NusTD= 0
+##$O1= 10251.369835
+##$ProjAngle= 0
+##$SFO1= 86.156216369835
+##$SW= 24.0000119985722
+##$SW_h= 2067.75022662762
+##$TD= 200
+##END=
