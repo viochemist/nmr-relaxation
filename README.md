@@ -21,3 +21,6 @@ For detailed information, please read the protocol (REF TBD). You will also find
 - M Gairi, A Dyachenko, MT Gonzalez, M Feliz, M Pons, E Giralt. J Biomol NMR (2015) 62:209-220. doi: [10.1007/s10858-015-9937-4](https://doi.org/10.1007/s10858-015-9937-4)
 - FA Mulder, RA de Graaf, R Kaptein, R Boelens. J Magn Reson (1998) 131.2:351-357. doi: [10.1006/jmre.1998.1380](https://doi.org/10.1006/jmre.1998.1380)
 - AG Palmer III, CD Kroenke, JP Loria. Methods Enzymol (2001) 339:204-38. doi: [10.1016/S0076-6879(01)39315-1](https://doi.org/10.1016/S0076-6879(01)39315-1)
+
+### Contact
+Alexandar L Hansen, ![email-address-image](https://github.com/user-attachments/assets/9a3d1d6d-7c3d-4a1f-bd50-e7ccaacf6171)
