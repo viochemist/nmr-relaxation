@@ -2,10 +2,21 @@
 
 ### First-Time Setup
 
-- Download pulse sequences from the [experiments](https://github.com/viochemist/nmr-relaxation/tree/main/experiments) folder and put them in the source directory for pulse programs (e.g., `C:\Bruker\TopSpin4.4.0\exp\stan\nmr\lists\pp\user`)
-- Download parameter sets from the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folder (the entire directories) and put them in the source directory for parameter sets (e.g., `C:\Bruker\TopSpin4.4.0\exp\stan\nmr\par\user`)
-- Download shape pulses from the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes) folder and put them in the source directory for shape files (e.g., `C:\Bruker\TopSpin4.4.0\exp\stan\nmr\list\wave\user`)
+- Download pulse sequences from the [experiments](https://github.com/viochemist/nmr-relaxation/tree/main/experiments) folder and put them in the source directory for pulse programs. e.g.
+
+      C:\Bruker\TopSpin4.4.0\exp\stan\nmr\lists\pp\user
+
+- Download parameter sets from the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folder (the entire directories) and put them in the source directory for parameter sets. e.g.
+
+      C:\Bruker\TopSpin4.4.0\exp\stan\nmr\par\user
+  
+- Download shape pulses from the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes) folder and put them in the source directory for shape files. e.g.
+
+      C:\Bruker\TopSpin4.4.0\exp\stan\nmr\list\wave\user
+      
 - In TopSpin, open `edprosol` and update shapes 6 and 7 for the 15N decoupler channel (see the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes/README.md) folder here for more details)
+  - This step requires some administrative priveleges. The default password is 'topspin' but this may have been changed by NMR facility staff. Please implement only new experiments only under appropriate supervision.
+
 - Run `paracon`, select the 4 relaxation parameter sets, and `Execute`
 
   ![image](https://github.com/user-attachments/assets/195f5d15-f553-476d-aa1a-d92ab00042c7)
