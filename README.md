@@ -1,5 +1,5 @@
 # Amide <sup>15</sup>N relaxation experiments
-NMR pulse sequences of amide pseudo-3D **<sup>15</sup>N *R*<sub>1</sub>**, ***R*<sub>1ρ</sub>**, and **{<sup>1</sup>H}-<sup>15</sup>N steady-state heteronuclear NOE** relaxation experiments  and shapes for Bruker spectrometers.
+NMR pulse sequences of amide pseudo-3D **<sup>15</sup>N *R*<sub>1</sub>**, ***R*<sub>1ρ</sub>**, and **{<sup>1</sup>H}-<sup>15</sup>N steady-state heteronuclear NOE** relaxation experiments, shapes, and parameter sets for Bruker spectrometers.
 
 ### Requirements
 - Topspin 3.6 or above
@@ -13,7 +13,7 @@ Tested with Topspin 3.6 and Avance III console.
 - (*R*<sub>1ρ</sub>) Adiabatic half passage pulses for alignment
 
 ### Setup
-See setup notes in the pulse sequence files.
+See setup notes in the pulse sequence files, the `shapes` folder, and the `parameters` folder.
 
 ### References
 - N-A Lakomek, J Ying, A Bax. J Biomol NMR (2012) 53:209-221. doi: https://doi.org/10.1007/s10858-012-9626-5
