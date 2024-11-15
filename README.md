@@ -13,10 +13,10 @@ Tested with Topspin 3.6 and Avance III console.
 - (*R*<sub>1ρ</sub>) Adiabatic half passage pulses for alignment
 
 ### Setup
-See setup notes in the headers of the pulse sequence files as well as the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes) and the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folders.
+For detailed information, please read the protocol (REF TBD). You will also find setup notes in the headers of the pulse sequence files as well as the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes) and the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folders.
 
 ### References
-- N-A Lakomek, J Ying, A Bax. J Biomol NMR (2012) 53:209-221. doi: https://doi.org/10.1007/s10858-012-9626-5
-- M Gairi, A Dyachenko, MT Gonzalez, M Feliz, M Pons, E Giralt. J Biomol NMR (2015) 62:209220. doi: https://doi.org/10.1007/s10858-015-9937-4
-- FA Mulder, RA de Graaf, R Kaptein, R Boelens. J Magn Reson (1998) 131.2:351-357. doi: https://doi.org/10.1006/jmre.1998.1380
-- AG Palmer III, CD Kroenke, JP Loria. Methods Enzymol (2001) 339:204-38. doi: https://doi.org/10.1016/S0076-6879(01)39315-1
+- N-A Lakomek, J Ying, A Bax. J Biomol NMR (2012) 53:209-221. doi: [10.1007/s10858-012-9626-5](https://doi.org/10.1007/s10858-012-9626-5)
+- M Gairi, A Dyachenko, MT Gonzalez, M Feliz, M Pons, E Giralt. J Biomol NMR (2015) 62:209-220. doi: [10.1007/s10858-015-9937-4](https://doi.org/10.1007/s10858-015-9937-4)
+- FA Mulder, RA de Graaf, R Kaptein, R Boelens. J Magn Reson (1998) 131.2:351-357. doi: [10.1006/jmre.1998.1380](https://doi.org/10.1006/jmre.1998.1380)
+- AG Palmer III, CD Kroenke, JP Loria. Methods Enzymol (2001) 339:204-38. doi: [10.1016/S0076-6879(01)39315-1](https://doi.org/10.1016/S0076-6879(01)39315-1)
