@@ -16,6 +16,7 @@ Tested with Topspin 3.6 and Avance III console.
 For detailed information, please read the protocol (REF TBD). You will also find setup notes in the headers of the pulse sequence files as well as the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes) and the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folders.
 
 ### References
+- X Xiang, AL Hansen, L Bruschweiler-Li, R Brüschweiler, M Xie. Under review. doi: [] ()
 - N-A Lakomek, J Ying, A Bax. J Biomol NMR (2012) 53:209-221. doi: [10.1007/s10858-012-9626-5](https://doi.org/10.1007/s10858-012-9626-5)
 - M Gairi, A Dyachenko, MT Gonzalez, M Feliz, M Pons, E Giralt. J Biomol NMR (2015) 62:209-220. doi: [10.1007/s10858-015-9937-4](https://doi.org/10.1007/s10858-015-9937-4)
 - FA Mulder, RA de Graaf, R Kaptein, R Boelens. J Magn Reson (1998) 131.2:351-357. doi: [10.1006/jmre.1998.1380](https://doi.org/10.1006/jmre.1998.1380)
