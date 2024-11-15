@@ -23,7 +23,7 @@
 
 ### Routine Experiment Setup
 
-- Create a new dataset and run `rpar` and load the desired relaxation parameter set
+- Create a new dataset and select the desired relaxation parameter set. Or, in an existing dataset run `rpar`.
 
   ![image](https://github.com/user-attachments/assets/28fb80ea-7ced-4b3b-a88f-cf0ec3ec876c)
 
