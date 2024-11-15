@@ -10,7 +10,7 @@ Tested with Topspin 3.6 and Avance III console.
 ### Details
 - Temperature compensation during d1
 - <sup>1</sup>H amide-selective 180<sup>o</sup> pulses for cross-correlated relaxation suppression
-- (*R*<sub>1ρ</sub>) Adiabatic half passage pulses for alignment
+- Adiabatic half passage pulses for accurate magnetization alignment in *R*<sub>1ρ</sub> experiments
 
 ### Setup
 For detailed information, please read the protocol (REF TBD). You will also find setup notes in the headers of the pulse sequence files as well as the [shapes](https://github.com/viochemist/nmr-relaxation/tree/main/shapes) and the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folders.
