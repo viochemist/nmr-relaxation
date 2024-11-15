@@ -1,6 +1,6 @@
 # Parameter Sets
 
-### Setup
+### First-Time Setup
 
 - Download pulse sequences from the [experiments](https://github.com/viochemist/nmr-relaxation/tree/main/experiments) folder and put them in the source directory for pulse programs (e.g., `C:\Bruker\TopSpin4.4.0\exp\stan\nmr\lists\pp\user`)
 - Download parameter sets from the [parameters](https://github.com/viochemist/nmr-relaxation/tree/main/parameters) folder (the entire directories) and put them in the source directory for parameter sets (e.g., `C:\Bruker\TopSpin4.4.0\exp\stan\nmr\par\user`)
@@ -9,6 +9,8 @@
 - Run `paracon`, select the 4 relaxation parameter sets, and `Execute`
 
   ![image](https://github.com/user-attachments/assets/195f5d15-f553-476d-aa1a-d92ab00042c7)
+
+### Routine Experiment Setup
 
 - Create a new dataset and run `rpar` and load the desired relaxation parameter set
 
