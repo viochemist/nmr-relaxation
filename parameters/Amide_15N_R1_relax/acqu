@@ -1,10 +1,10 @@
 ##TITLE= Parameter file, TopSpin 3.7.0
 ##JCAMPDX= 5.0
 ##DATATYPE= Parameter Values
-##NPOINTS= 6	$$ modification sequence number
+##NPOINTS= 7	$$ modification sequence number
 ##ORIGIN= Bruker BioSpin GmbH
 ##OWNER= bruschweiler
-$$ 2024-11-13 22:20:36.796 -0500  bruschweiler@cbec850rb
+$$ 2024-11-17 18:57:43.409 -0500  bruschweiler@cbec850rb
 $$ /home/nmr/CCIC_experiments/development/par/Amide_15N_R1_relax/acqu
 $$ process /opt/topspin3.7.0/prog/mod/edparproc
 ##$ACQT0= 0
@@ -92,7 +92,7 @@ $$ process /opt/topspin3.7.0/prog/mod/edparproc
 ##$GPY= (0..31)
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 ##$GPZ= (0..31)
-30 3 2 -50 40 2 -5 -2 16.21 70 40 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+30 3 2 -50 80 2 -5 -2 16.21 70 40 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0
 ##$GRDPROG= <>
 ##$GRPDLY= -1
